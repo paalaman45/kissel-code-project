@@ -69,15 +69,15 @@ export const useEnvConfig = (): EnvConfig => {
     },
     
     contact: {
-      email: import.meta.env.VITE_CONTACT_EMAIL || 'kisseljamespaalam@gmail.com',
-      phone: import.meta.env.VITE_CONTACT_PHONE || '+639770231063',
-      allowedEmail: import.meta.env.VITE_CONTACT_EMAIL || 'kisseljamespaalam@gmail.com'
+      email: import.meta.env.VITE_CONTACT_EMAIL || '',
+      phone: import.meta.env.VITE_CONTACT_PHONE || '',
+      allowedEmail: import.meta.env.VITE_CONTACT_EMAIL || ''
     },
     
     social: {
-      github: import.meta.env.VITE_GITHUB_URL || 'https://github.com/paalaman45',
-      linkedin: import.meta.env.VITE_LINKEDIN_URL || 'https://www.linkedin.com/in/kissel-james-paalaman/',
-      instagram: import.meta.env.VITE_INSTAGRAM_URL || 'https://www.instagram.com/kiningkoy7'
+      github: import.meta.env.VITE_GITHUB_URL || '',
+      linkedin: import.meta.env.VITE_LINKEDIN_URL || '',
+      instagram: import.meta.env.VITE_INSTAGRAM_URL || ''
     }
   }
 }

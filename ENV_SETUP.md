@@ -43,9 +43,9 @@ VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
 For image upload functionality:
 
 ```env
-VITE_GITHUB_TOKEN=your_github_personal_access_token
-VITE_GITHUB_REPO=username/repository-name
-VITE_GITHUB_OWNER=your_github_username
+VITE_GITHUB_TOKEN=ghp_your_github_token_here
+VITE_GITHUB_REPO=username/repo-name
+VITE_GITHUB_OWNER=github_username
 ```
 
 **How to get GitHub Personal Access Token:**
@@ -68,9 +68,9 @@ VITE_INSTAGRAM_URL=https://instagram.com/yourusername
 Customize your portfolio details:
 
 ```env
-VITE_APP_TITLE=Your Name
-VITE_APP_DESCRIPTION=Your Portfolio Description
-VITE_APP_URL=https://your-domain.com
+VITE_APP_TITLE=Your_Portfolio_Name
+VITE_APP_DESCRIPTION=Your_Portfolio_Description
+VITE_APP_URL=https://your-portfolio-domain.com
 ```
 
 ## Development vs Production
