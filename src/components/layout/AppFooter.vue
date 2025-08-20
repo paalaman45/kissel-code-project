@@ -136,10 +136,10 @@
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-400 font-poppins">Email</p>
                 <a 
-                  href="mailto:kisseljamespaalam@gmail.com" 
+                  :href="`mailto:${envConfig.contact.email}`" 
                   class="text-gray-300 hover:text-primary-400 transition-all duration-300 transform hover:translate-x-1 font-poppins break-all"
                 >
-                  kisseljamespaalam@gmail.com
+                  {{ envConfig.contact.email }}
                 </a>
               </div>
             </div>
@@ -152,10 +152,10 @@
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-400 font-poppins">Phone</p>
                 <a 
-                  href="tel:+639770231063" 
+                  :href="`tel:${envConfig.contact.phone}`" 
                   class="text-gray-300 hover:text-primary-400 transition-all duration-300 transform hover:translate-x-1 font-poppins"
                 >
-                  +63 (977) 023-1063
+                  {{ envConfig.contact.phone }}
                 </a>
               </div>
             </div>
@@ -166,7 +166,7 @@
             <p class="text-sm text-gray-400 mb-4 font-poppins">Follow me on social media</p>
             <div class="flex space-x-4">
               <a 
-                href="https://github.com/paalaman45" 
+                :href="envConfig.social.github" 
                 target="_blank"
                 rel="noopener noreferrer"
                 class="group w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center hover:from-primary-500/20 hover:to-accent-500/20 transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-primary-500/25 border border-gray-700 hover:border-primary-500/50"
@@ -177,7 +177,7 @@
                 </svg>
               </a>
               <a 
-                href="https://www.linkedin.com/in/kissel-james-paalaman/" 
+                :href="envConfig.social.linkedin" 
                 target="_blank"
                 rel="noopener noreferrer"
                 class="group w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center hover:from-primary-500/20 hover:to-accent-500/20 transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-primary-500/25 border border-gray-700 hover:border-primary-500/50"
@@ -188,7 +188,7 @@
                 </svg>
               </a>
               <a 
-                href="https://www.instagram.com/kiningkoy7" 
+                :href="envConfig.social.instagram" 
                 target="_blank"
                 rel="noopener noreferrer"
                 class="group w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center hover:from-primary-500/20 hover:to-accent-500/20 transition-all duration-300 transform hover:scale-110 hover:shadow-lg hover:shadow-primary-500/25 border border-gray-700 hover:border-primary-500/50"
@@ -226,6 +226,10 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useEnvConfig } from '@/composables/useEnvConfig'
+
+// Get environment configuration
+const envConfig = useEnvConfig()
 
 // Get current year for copyright
 const currentYear = computed(() => new Date().getFullYear())

@@ -2,18 +2,20 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
+import { useEnvConfig, validateEnvConfig } from '@/composables/useEnvConfig'
 
-// Firebase configuration object
-// Replace these values with your actual Firebase project configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBXbLvpUZBNMlUH34s4gApDj8i0lgEdHZ8",
-  authDomain: "kissel-james-paalaman.firebaseapp.com",
-  projectId: "kissel-james-paalaman",
-  storageBucket: "kissel-james-paalaman.firebasestorage.app",
-  messagingSenderId: "813375152467",
-  appId: "1:813375152467:web:db16fd83b8f0d3974141a6",
-  measurementId: "G-K7LST82Z16"
-};
+// Get environment configuration
+const envConfig = useEnvConfig()
+
+// Validate required environment variables
+const validation = validateEnvConfig()
+if (!validation.isValid) {
+  console.error('Missing required environment variables:', validation.missing)
+  console.error('Please check your .env file and ensure all Firebase configuration variables are set')
+}
+
+// Firebase configuration object using environment variables
+const firebaseConfig = envConfig.firebase;
 
 // Initialize Firebase app
 const app = initializeApp(firebaseConfig)

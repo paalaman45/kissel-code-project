@@ -1,9 +1,11 @@
 import { ref } from 'vue'
 import { signInWithPopup, signOut, type User } from 'firebase/auth'
 import { auth, googleProvider } from '@/firebase/config'
+import { useEnvConfig } from '@/composables/useEnvConfig'
 
-// Add your personal Gmail address here - only this email will be allowed to login
-const ALLOWED_EMAIL = 'kisseljamespaalam@gmail.com' // Replace with your actual Gmail
+// Get configuration from environment
+const envConfig = useEnvConfig()
+const ALLOWED_EMAIL = envConfig.contact.allowedEmail
 
 export const useGoogleAuth = () => {
   const user = ref<User | null>(null)

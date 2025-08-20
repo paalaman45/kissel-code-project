@@ -79,7 +79,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                   </svg>
                 </div>
-                <span class="text-gray-700 font-medium">kisseljamespaalam@gmail.com</span>
+                <span class="text-gray-700 font-medium">{{ envConfig.contact.email }}</span>
               </div>
               <div class="flex items-center space-x-4 group hover:bg-blue-50 p-3 rounded-lg transition-colors">
                 <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -175,12 +175,14 @@
 <script setup>
 import { computed, onMounted } from 'vue'
 import { useContentStore } from '@/stores/content'
+import { useEnvConfig } from '@/composables/useEnvConfig'
 import { useFirestore } from '@/composables/useFirestore'
 import { useImageUpload } from '@/composables/useImageUpload'
 import KisselImage from '@/assets/Kissel-nologo.png'
 
-// Content store for local state
+// Content store for local state and environment config
 const contentStore = useContentStore()
+const envConfig = useEnvConfig()
 const localAbout = computed(() => contentStore.aboutMe)
 
 // Firebase integration for about content

@@ -70,7 +70,7 @@
           <!-- Social Media Links -->
           <div class="flex justify-center lg:justify-start space-x-6 pt-8 animate-fade-in-up animation-delay-1200">
             <a 
-              href="https://github.com/paalaman45" 
+              :href="envConfig.social.github" 
               target="_blank"
               rel="noopener noreferrer"
               class="text-gray-300 hover:text-cyan-400 transform hover:scale-110 transition-all duration-300 hover:glow"
@@ -81,7 +81,7 @@
               </svg>
             </a>
             <a 
-              href="https://www.linkedin.com/in/kissel-james-paalaman/" 
+              :href="envConfig.social.linkedin" 
               target="_blank"
               rel="noopener noreferrer"
               class="text-gray-300 hover:text-cyan-400 transform hover:scale-110 transition-all duration-300 hover:glow"
@@ -92,7 +92,7 @@
               </svg>
             </a>
             <a 
-              href="https://www.instagram.com/kiningkoy7" 
+              :href="envConfig.social.instagram" 
               target="_blank"
               rel="noopener noreferrer"
               class="text-gray-300 hover:text-cyan-400 transform hover:scale-110 transition-all duration-300 hover:glow"
@@ -204,9 +204,11 @@
 <script setup>
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useContentStore } from '@/stores/content'
+import { useEnvConfig } from '@/composables/useEnvConfig'
 
-// Access content store
+// Access content store and environment config
 const contentStore = useContentStore()
+const envConfig = useEnvConfig()
 const hero = computed(() => contentStore.hero)
 
 // Typing animation
