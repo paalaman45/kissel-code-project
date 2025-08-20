@@ -50,4 +50,3 @@ onMounted(() => {
   })
 })
 </script>
-</template>
