@@ -59,14 +59,14 @@
           <div class="aspect-w-16 aspect-h-10 bg-gradient-to-br from-emerald-100 to-cyan-100 relative">
             <div class="w-full h-56 overflow-hidden relative">
               <img
-                v-if="project.image && !imageErrors[project.id]"
-                :src="getProjectImageUrl(project.image)"
+                v-if="!imageErrors[project.id]"
+                :src="getProjectImageUrl(project.thumbnail || project.image)"
                 :alt="project.title"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 @error="() => handleImageError(project.id)"
               />
-              <!-- Fallback when no image or image failed to load -->
-              <div v-if="!project.image || imageErrors[project.id]" class="w-full h-full bg-gradient-to-br from-emerald-100 via-teal-100 to-cyan-100 flex items-center justify-center">
+              <!-- Fallback when image failed to load -->
+              <div v-if="imageErrors[project.id]" class="w-full h-full bg-gradient-to-br from-emerald-100 via-teal-100 to-cyan-100 flex items-center justify-center">
                 <div class="w-20 h-20 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
                   <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
@@ -101,29 +101,42 @@
           <!-- Project Content -->
           <div class="p-6 relative z-10">
             <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:bg-gradient-to-r group-hover:from-emerald-600 group-hover:to-cyan-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
-              {{ project.title }}
+              <router-link
+                :to="{ name: 'project-detail', params: { id: project.id } }"
+                class="hover:underline cursor-pointer"
+              >
+                {{ project.title }}
+              </router-link>
             </h3>
             
             <p class="text-gray-600 leading-relaxed mb-4 line-clamp-3 font-light">
               {{ project.description }}
             </p>
             
-            <!-- Project Link -->
+            <!-- Project Actions -->
             <div class="flex items-center justify-between pt-4">
-              <a
-                v-if="project.projectLink"
-                :href="project.projectLink"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white px-4 py-2 rounded-xl font-medium text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/25 space-x-2"
-              >
-                <span>View Project</span>
-                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                </svg>
-              </a>
-              <div v-else class="text-gray-400 text-sm font-medium bg-gray-100 px-4 py-2 rounded-xl">
-                Preview Only
+              <div class="flex items-center space-x-2">
+                <router-link
+                  :to="{ name: 'project-detail', params: { id: project.id } }"
+                  class="inline-flex items-center bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white px-4 py-2 rounded-xl font-medium text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/25 space-x-2"
+                >
+                  <span>View Details</span>
+                  <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  </svg>
+                </router-link>
+                <a
+                  v-if="project.projectLink"
+                  :href="project.projectLink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl font-medium text-sm transition-all duration-300 transform hover:scale-105"
+                  title="View Live Project"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </a>
               </div>
               
               <!-- Category Badge (shown when not hovering) -->
@@ -180,7 +193,8 @@ const defaultProjects = [
     description: 'A full-featured e-commerce platform built with Vue.js, Node.js, and MySQL. Features include product catalog, shopping cart, payment integration, and admin dashboard.',
     category: 'Web Development',
     projectLink: 'https://example.com',
-    image: null
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   },
   {
     id: 'project-2',
@@ -188,7 +202,8 @@ const defaultProjects = [
     description: 'A collaborative task management application with real-time updates, built using Vue 3, Firebase, and Tailwind CSS. Supports team collaboration and project tracking.',
     category: 'Web App',
     projectLink: 'https://example.com',
-    image: null
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   },
   {
     id: 'project-3',
@@ -196,7 +211,8 @@ const defaultProjects = [
     description: 'Custom WordPress theme development for a corporate website with responsive design, SEO optimization, and custom post types. Built with PHP and advanced CSS.',
     category: 'WordPress',
     projectLink: 'https://example.com',
-    image: null
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   },
   {
     id: 'project-4',
@@ -204,7 +220,8 @@ const defaultProjects = [
     description: 'Online reservation system for restaurants with table management, customer notifications, and admin panel. Built with Laravel and Vue.js.',
     category: 'Web Development',
     projectLink: 'https://example.com',
-    image: null
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   },
   {
     id: 'project-5',
@@ -212,7 +229,8 @@ const defaultProjects = [
     description: 'Responsive portfolio website showcasing creative work with smooth animations and modern design. Built with HTML5, CSS3, and JavaScript.',
     category: 'Frontend',
     projectLink: 'https://example.com',
-    image: null
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   },
   {
     id: 'project-6',
@@ -220,7 +238,8 @@ const defaultProjects = [
     description: 'Dashboard for monitoring and managing third-party API integrations with real-time data visualization and analytics.',
     category: 'Web App',
     projectLink: 'https://example.com',
-    image: null
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   }
 ]
 
@@ -235,7 +254,10 @@ const displayProjects = computed(() => {
  * Get project image URL with fallback
  */
 const getProjectImageUrl = (imageValue) => {
-  if (!imageValue) return null
+  if (!imageValue) {
+    // Return your profile image as fallback for projects without images
+    return getImageUrl('Kissel-nologo.png')
+  }
   return getImageUrl(imageValue)
 }
 

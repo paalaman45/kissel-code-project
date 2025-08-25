@@ -47,8 +47,8 @@
                 <div class="flex items-center space-x-3">
                   <div class="flex-shrink-0 w-12 h-12">
                     <img
-                      v-if="project.image"
-                      :src="getImageUrl(project.image)"
+                      v-if="project.thumbnail || project.image"
+                      :src="getImageUrl(project.thumbnail || project.image)"
                       :alt="project.title"
                       class="w-12 h-12 rounded-lg object-cover border"
                     />
@@ -193,16 +193,16 @@
               />
             </div>
 
-            <!-- Project Image Upload -->
+            <!-- Thumbnail Image Upload -->
             <div>
-              <label for="image" class="block text-sm font-medium text-gray-700 mb-1">
-                Project Image
+              <label for="thumbnail" class="block text-sm font-medium text-gray-700 mb-1">
+                Thumbnail Image (Primary) *
               </label>
               <div class="space-y-3">
                 <!-- Current Image Preview -->
-                <div v-if="formData.image" class="relative inline-block">
+                <div v-if="formData.thumbnail || formData.image" class="relative inline-block">
                   <img
-                    :src="getImageUrl(formData.image)"
+                    :src="getImageUrl(formData.thumbnail || formData.image)"
                     alt="Project image"
                     class="w-48 h-32 object-cover rounded-lg border"
                   />
@@ -234,10 +234,68 @@
                     <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
-                    {{ uploadingImage ? 'Uploading...' : 'Choose Project Image' }}
+                    {{ uploadingImage ? 'Uploading...' : 'Choose Thumbnail' }}
                   </button>
                 </div>
-                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 5MB. Recommended size: 800x600px</p>
+                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 5MB. This will be used as the main preview image.</p>
+              </div>
+            </div>
+
+            <!-- Multiple Images Upload -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Additional Images
+              </label>
+              <div class="space-y-3">
+                <!-- Current Images Preview -->
+                <div v-if="formData.images && formData.images.length > 0" class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div
+                    v-for="(image, index) in formData.images"
+                    :key="index"
+                    class="relative group"
+                  >
+                    <img
+                      :src="getImageUrl(image)"
+                      :alt="`Project image ${index + 1}`"
+                      class="w-full h-24 object-cover rounded-lg border"
+                    />
+                    <button
+                      type="button"
+                      @click="removeAdditionalImage(index)"
+                      class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- File Input for Multiple Images -->
+                <div class="flex items-center space-x-3">
+                  <input
+                    ref="imagesInput"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    @change="handleMultipleImageUpload"
+                    class="hidden"
+                  />
+                  <button
+                    type="button"
+                    @click="$refs.imagesInput?.click()"
+                    :disabled="uploadingImages"
+                    class="px-4 py-2 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg transition-colors flex items-center"
+                  >
+                    <div v-if="uploadingImages" class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+                    <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    {{ uploadingImages ? 'Uploading...' : 'Add Images' }}
+                  </button>
+                  <span class="text-sm text-gray-500">
+                    {{ formData.images?.length || 0 }} image(s) selected
+                  </span>
+                </div>
+                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 5MB each. You can select multiple images at once.</p>
               </div>
             </div>
 
@@ -300,6 +358,10 @@ const { documents: projects, loading, error, fetchDocuments, createDocument, upd
 // Image upload integration
 const { uploading: uploadingImage, uploadImage, getImageUrl, deleteImage, validateImage } = useImageUpload()
 
+// Additional upload states
+const uploadingThumbnail = ref(false)
+const uploadingImages = ref(false)
+
 // Component state
 const showModal = ref(false)
 const editingProject = ref(null)
@@ -312,7 +374,9 @@ const formData = ref({
   category: '',
   projectLink: '',
   description: '',
-  image: ''
+  thumbnail: '', // Primary image for preview
+  images: [], // Array of additional images
+  image: '' // Legacy field for backward compatibility
 })
 
 /**
@@ -346,7 +410,9 @@ const editProject = (project) => {
     category: project.category || '',
     projectLink: project.projectLink || '',
     description: project.description || '',
-    image: project.image || ''
+    thumbnail: project.thumbnail || project.image || '', // Use thumbnail or fallback to legacy image
+    images: project.images || [],
+    image: project.image || '' // Keep for backward compatibility
   }
   showModal.value = true
 }
@@ -370,6 +436,8 @@ const resetForm = () => {
     category: '',
     projectLink: '',
     description: '',
+    thumbnail: '',
+    images: [],
     image: ''
   }
 }
@@ -433,7 +501,7 @@ const clearMessage = () => {
 }
 
 /**
- * Handle image upload
+ * Handle image upload (works as both thumbnail and legacy image)
  */
 const handleImageUpload = async (event) => {
   const file = event.target.files?.[0]
@@ -448,6 +516,8 @@ const handleImageUpload = async (event) => {
 
   try {
     const result = await uploadImage(file)
+    // Set both thumbnail and legacy image for compatibility
+    formData.value.thumbnail = result.filename
     formData.value.image = result.filename
     showMessage('Image uploaded successfully!', 'success')
   } catch (err) {
@@ -459,17 +529,80 @@ const handleImageUpload = async (event) => {
 }
 
 /**
+ * Handle multiple images upload
+ */
+const handleMultipleImageUpload = async (event) => {
+  const files = Array.from(event.target.files || [])
+  if (files.length === 0) return
+
+  try {
+    uploadingImages.value = true
+    const uploadedImages = []
+    
+    // Upload files sequentially to avoid conflicts with uploading state
+    for (const file of files) {
+      // Validate each image
+      const validationError = validateImage(file)
+      if (validationError) {
+        showMessage(`${file.name}: ${validationError}`, 'error')
+        continue
+      }
+      
+      try {
+        const result = await uploadImage(file)
+        uploadedImages.push(result.filename)
+      } catch (err) {
+        showMessage(`Failed to upload ${file.name}: ${err.message}`, 'error')
+      }
+    }
+    
+    if (uploadedImages.length > 0) {
+      // Add to existing images
+      formData.value.images = [...(formData.value.images || []), ...uploadedImages]
+      showMessage(`${uploadedImages.length} image(s) uploaded successfully!`, 'success')
+    }
+  } catch (err) {
+    showMessage('Failed to upload images: ' + err.message, 'error')
+  } finally {
+    uploadingImages.value = false
+  }
+
+  // Clear the file input
+  event.target.value = ''
+}
+
+/**
  * Remove image
  */
 const removeImage = async () => {
-  if (formData.value.image) {
+  const imageToRemove = formData.value.thumbnail || formData.value.image
+  if (imageToRemove) {
     try {
-      await deleteImage(formData.value.image)
+      await deleteImage(imageToRemove)
+      formData.value.thumbnail = ''
       formData.value.image = ''
       showMessage('Image removed successfully!', 'success')
     } catch (err) {
       console.error('Failed to delete image:', err)
+      formData.value.thumbnail = ''
       formData.value.image = ''
+    }
+  }
+}
+
+/**
+ * Remove additional image
+ */
+const removeAdditionalImage = async (index) => {
+  const imageToRemove = formData.value.images[index]
+  if (imageToRemove) {
+    try {
+      await deleteImage(imageToRemove)
+      formData.value.images.splice(index, 1)
+      showMessage('Image removed successfully!', 'success')
+    } catch (err) {
+      console.error('Failed to delete image:', err)
+      formData.value.images.splice(index, 1)
     }
   }
 }
