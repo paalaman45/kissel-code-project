@@ -24,7 +24,7 @@
             required
             autocomplete="email"
             :disabled="loading"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed placeholder:text-gray-500 text-gray-900"
             placeholder="Enter your email"
           />
         </div>
@@ -42,7 +42,7 @@
               required
               autocomplete="current-password"
               :disabled="loading"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed pr-12"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed pr-12 placeholder:text-gray-500 text-gray-900"
               placeholder="Enter your password"
             />
             <button
@@ -117,13 +117,6 @@
         </button>
       </form>
 
-      <!-- Demo Credentials -->
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 class="text-sm font-medium text-blue-800 mb-2">Demo Credentials</h3>
-        <p class="text-xs text-blue-600 mb-1">Email: admin@example.com</p>
-        <p class="text-xs text-blue-600">Password: admin123</p>
-        <p class="text-xs text-blue-500 mt-2">Note: Configure Firebase Authentication to enable real login</p>
-      </div>
 
       <!-- Back to Home -->
       <div class="text-center">
@@ -149,8 +142,8 @@ const { user, signIn } = useAuth()
 const { signInWithGoogle, loading: googleLoading, error: googleError } = useGoogleAuth()
 
 // Form state
-const email = ref('admin@example.com')
-const password = ref('admin123')
+const email = ref('')
+const password = ref('')
 const showPassword = ref(false)
 const loading = ref(false)
 const error = ref('')
@@ -179,18 +172,9 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
-    // For demo purposes, we'll simulate a login
-    // In production, this would use Firebase Authentication
-    if (email.value === 'admin@example.com' && password.value === 'admin123') {
-      // Simulate successful login
-      setTimeout(() => {
-        router.push('/admin')
-      }, 1000)
-    } else {
-      // Try Firebase authentication
-      await signIn(email.value, password.value)
-      router.push('/admin')
-    }
+    // Use Firebase authentication
+    await signIn(email.value, password.value)
+    router.push('/admin')
   } catch (err) {
     error.value = err.message || 'Invalid credentials. Please try again.'
   } finally {
@@ -207,11 +191,4 @@ onMounted(() => {
   }
 })
 
-/**
- * Auto-fill demo credentials
- */
-const fillDemoCredentials = () => {
-  email.value = 'admin@example.com'
-  password.value = 'admin123'
-}
 </script>
