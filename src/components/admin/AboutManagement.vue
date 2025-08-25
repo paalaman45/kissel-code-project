@@ -95,10 +95,10 @@
           ></textarea>
         </div>
 
-        <!-- Profile Image Upload -->
+        <!-- Profile Image URL -->
         <div>
           <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
-            Profile Image
+            Profile Image URL
           </label>
           <div class="space-y-3">
             <!-- Current Image Preview -->
@@ -116,30 +116,22 @@
                 ×
               </button>
             </div>
-            
-            <!-- File Input -->
-            <div class="flex items-center space-x-3">
-              <input
-                ref="imageInput"
-                type="file"
-                accept="image/*"
-                @change="handleImageUpload"
-                class="hidden"
-              />
-              <button
-                type="button"
-                @click="$refs.imageInput?.click()"
-                :disabled="uploadingImage"
-                class="px-4 py-2 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg transition-colors flex items-center"
-              >
-                <div v-if="uploadingImage" class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
-                <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                {{ uploadingImage ? 'Uploading...' : 'Choose Profile Image' }}
-              </button>
+            <!-- Placeholder when no image -->
+            <div v-else class="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center border border-dashed border-gray-300">
+              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
             </div>
-            <p class="text-xs text-gray-500">PNG, JPG, GIF up to 5MB. Square images work best for profile photos.</p>
+            
+            <!-- URL Input -->
+            <input
+              id="image"
+              v-model="formData.image"
+              type="url"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 bg-white"
+              placeholder="https://example.com/profile-image.jpg"
+            />
+            <p class="text-xs text-gray-500">Enter the direct URL to your profile image. Square images work best for profile photos.</p>
           </div>
         </div>
 
@@ -193,16 +185,12 @@
 import { ref, computed, onMounted } from 'vue'
 import { useFirestore } from '@/composables/useFirestore'
 import { useContentStore } from '@/stores/content'
-import { useImageUpload } from '@/composables/useImageUpload'
 
 // Firebase integration
 const { document: aboutDoc, loading, error, fetchDocument, updateDocument } = useFirestore('about')
 
 // Content store for local fallback
 const contentStore = useContentStore()
-
-// Image upload integration
-const { uploading: uploadingImage, uploadImage, getImageUrl, deleteImage, validateImage } = useImageUpload()
 
 // Component state
 const isEditing = ref(false)
@@ -309,45 +297,28 @@ const clearMessage = () => {
 }
 
 /**
- * Handle image upload
+ * Remove image
  */
-const handleImageUpload = async (event) => {
-  const file = event.target.files?.[0]
-  if (!file) return
-
-  // Validate image
-  const validationError = validateImage(file)
-  if (validationError) {
-    showMessage(validationError, 'error')
-    return
-  }
-
-  try {
-    const result = await uploadImage(file)
-    formData.value.image = result.filename
-    showMessage('Profile image uploaded successfully!', 'success')
-  } catch (err) {
-    showMessage('Failed to upload image: ' + err.message, 'error')
-  }
-
-  // Clear the file input
-  event.target.value = ''
+const removeImage = () => {
+  formData.value.image = ''
+  showMessage('Profile image removed successfully!', 'success')
 }
 
 /**
- * Remove image
+ * Get image URL for display (simplified since we're now using direct URLs)
  */
-const removeImage = async () => {
-  if (formData.value.image) {
-    try {
-      await deleteImage(formData.value.image)
-      formData.value.image = ''
-      showMessage('Profile image removed successfully!', 'success')
-    } catch (err) {
-      console.error('Failed to delete image:', err)
-      formData.value.image = ''
-    }
+const getImageUrl = (imageValue) => {
+  if (!imageValue) {
+    return '/images/Kissel-nologo.png' // Default placeholder
   }
+  
+  // If it's already a URL, return as-is
+  if (imageValue.startsWith('http')) {
+    return imageValue
+  }
+  
+  // Fallback for legacy stored filenames
+  return `/images/${imageValue}`
 }
 
 /**

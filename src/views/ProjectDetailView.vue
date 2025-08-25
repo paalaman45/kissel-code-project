@@ -252,11 +252,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useFirestore } from '@/composables/useFirestore'
-import { useImageUpload } from '@/composables/useImageUpload'
 
 const route = useRoute()
 const { document: project, loading, error, fetchDocument } = useFirestore('work')
-const { getImageUrl } = useImageUpload()
 
 // Image modal state
 const showImageModal = ref(false)
@@ -270,6 +268,18 @@ const descriptionParagraphs = computed(() => {
 })
 
 // Methods
+const getImageUrl = (imageValue) => {
+  if (!imageValue) {
+    return '/images/Kissel-nologo.png'
+  }
+  
+  if (imageValue.startsWith('http')) {
+    return imageValue
+  }
+  
+  return `/images/${imageValue}`
+}
+
 const formatDate = (dateString) => {
   if (!dateString) return ''
   try {

@@ -193,16 +193,16 @@
               />
             </div>
 
-            <!-- Thumbnail Image Upload -->
+            <!-- Featured Image Link -->
             <div>
               <label for="thumbnail" class="block text-sm font-medium text-gray-700 mb-1">
-                Thumbnail Image (Primary) *
+                Featured Image Link *
               </label>
               <div class="space-y-3">
                 <!-- Current Image Preview -->
                 <div v-if="formData.thumbnail || formData.image" class="relative inline-block">
                   <img
-                    :src="getImageUrl(formData.thumbnail || formData.image)"
+                    :src="formData.thumbnail || formData.image"
                     alt="Project image"
                     class="w-48 h-32 object-cover rounded-lg border"
                   />
@@ -214,37 +214,30 @@
                     ×
                   </button>
                 </div>
-                
-                <!-- File Input -->
-                <div class="flex items-center space-x-3">
-                  <input
-                    ref="imageInput"
-                    type="file"
-                    accept="image/*"
-                    @change="handleImageUpload"
-                    class="hidden"
-                  />
-                  <button
-                    type="button"
-                    @click="$refs.imageInput?.click()"
-                    :disabled="uploadingImage"
-                    class="px-4 py-2 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg transition-colors flex items-center"
-                  >
-                    <div v-if="uploadingImage" class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
-                    <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    {{ uploadingImage ? 'Uploading...' : 'Choose Thumbnail' }}
-                  </button>
+                <!-- Placeholder when no image -->
+                <div v-else class="w-48 h-32 bg-gray-100 rounded-lg flex items-center justify-center border border-dashed border-gray-300">
+                  <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
                 </div>
-                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 5MB. This will be used as the main preview image.</p>
+                
+                <!-- URL Input -->
+                <input
+                  id="thumbnail"
+                  v-model="formData.thumbnail"
+                  type="url"
+                  required
+                  class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900"
+                  placeholder="https://example.com/image.jpg"
+                />
+                <p class="text-xs text-gray-500">Enter the direct URL to your featured image. This will be used as the main preview image.</p>
               </div>
             </div>
 
-            <!-- Multiple Images Upload -->
+            <!-- Additional Image URLs -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">
-                Additional Images
+                Additional Image URLs
               </label>
               <div class="space-y-3">
                 <!-- Current Images Preview -->
@@ -255,10 +248,16 @@
                     class="relative group"
                   >
                     <img
-                      :src="getImageUrl(image)"
+                      v-if="image && image.startsWith('http')"
+                      :src="image"
                       :alt="`Project image ${index + 1}`"
                       class="w-full h-24 object-cover rounded-lg border"
                     />
+                    <div v-else class="w-full h-24 bg-gray-100 rounded-lg flex items-center justify-center border border-dashed border-gray-300">
+                      <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                    </div>
                     <button
                       type="button"
                       @click="removeAdditionalImage(index)"
@@ -269,33 +268,31 @@
                   </div>
                 </div>
                 
-                <!-- File Input for Multiple Images -->
-                <div class="flex items-center space-x-3">
-                  <input
-                    ref="imagesInput"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    @change="handleMultipleImageUpload"
-                    class="hidden"
-                  />
-                  <button
-                    type="button"
-                    @click="$refs.imagesInput?.click()"
-                    :disabled="uploadingImages"
-                    class="px-4 py-2 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 text-gray-700 border border-gray-300 rounded-lg transition-colors flex items-center"
-                  >
-                    <div v-if="uploadingImages" class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
-                    <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    {{ uploadingImages ? 'Uploading...' : 'Add Images' }}
-                  </button>
-                  <span class="text-sm text-gray-500">
-                    {{ formData.images?.length || 0 }} image(s) selected
-                  </span>
+                <!-- Add URL Input -->
+                <div class="space-y-2">
+                  <div class="flex items-center space-x-2">
+                    <input
+                      v-model="newImageUrl"
+                      type="url"
+                      class="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900"
+                      placeholder="https://example.com/image.jpg"
+                    />
+                    <button
+                      type="button"
+                      @click="addImageUrl"
+                      :disabled="!newImageUrl"
+                      class="px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 text-white rounded-lg transition-colors flex items-center"
+                    >
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                      </svg>
+                      Add
+                    </button>
+                  </div>
+                  <p class="text-xs text-gray-500">
+                    Enter image URLs and click Add to include them. {{ formData.images?.length || 0 }} image(s) added.
+                  </p>
                 </div>
-                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 5MB each. You can select multiple images at once.</p>
               </div>
             </div>
 
@@ -350,23 +347,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useFirestore } from '@/composables/useFirestore'
-import { useImageUpload } from '@/composables/useImageUpload'
 
 // Firebase integration
 const { documents: projects, loading, error, fetchDocuments, createDocument, updateDocument, deleteDocument } = useFirestore('work')
-
-// Image upload integration
-const { uploading: uploadingImage, uploadImage, getImageUrl, deleteImage, validateImage } = useImageUpload()
-
-// Additional upload states
-const uploadingThumbnail = ref(false)
-const uploadingImages = ref(false)
 
 // Component state
 const showModal = ref(false)
 const editingProject = ref(null)
 const saving = ref(false)
 const message = ref(null)
+const newImageUrl = ref('')
 
 // Form data
 const formData = ref({
@@ -440,6 +430,7 @@ const resetForm = () => {
     images: [],
     image: ''
   }
+  newImageUrl.value = ''
 }
 
 /**
@@ -501,110 +492,73 @@ const clearMessage = () => {
 }
 
 /**
- * Handle image upload (works as both thumbnail and legacy image)
+ * Add image URL to additional images
  */
-const handleImageUpload = async (event) => {
-  const file = event.target.files?.[0]
-  if (!file) return
-
-  // Validate image
-  const validationError = validateImage(file)
-  if (validationError) {
-    showMessage(validationError, 'error')
+const addImageUrl = () => {
+  const url = newImageUrl.value.trim()
+  if (!url) return
+  
+  // Basic URL validation
+  try {
+    new URL(url)
+  } catch {
+    showMessage('Please enter a valid URL', 'error')
     return
   }
-
-  try {
-    const result = await uploadImage(file)
-    // Set both thumbnail and legacy image for compatibility
-    formData.value.thumbnail = result.filename
-    formData.value.image = result.filename
-    showMessage('Image uploaded successfully!', 'success')
-  } catch (err) {
-    showMessage('Failed to upload image: ' + err.message, 'error')
-  }
-
-  // Clear the file input
-  event.target.value = ''
-}
-
-/**
- * Handle multiple images upload
- */
-const handleMultipleImageUpload = async (event) => {
-  const files = Array.from(event.target.files || [])
-  if (files.length === 0) return
-
-  try {
-    uploadingImages.value = true
-    const uploadedImages = []
-    
-    // Upload files sequentially to avoid conflicts with uploading state
-    for (const file of files) {
-      // Validate each image
-      const validationError = validateImage(file)
-      if (validationError) {
-        showMessage(`${file.name}: ${validationError}`, 'error')
-        continue
-      }
-      
-      try {
-        const result = await uploadImage(file)
-        uploadedImages.push(result.filename)
-      } catch (err) {
-        showMessage(`Failed to upload ${file.name}: ${err.message}`, 'error')
-      }
+  
+  // Check if it's likely an image URL
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg']
+  const hasImageExtension = imageExtensions.some(ext => url.toLowerCase().includes(ext))
+  const isImageHost = url.includes('githubusercontent.com') || url.includes('imgur.com') || url.includes('cloudinary.com') || url.includes('unsplash.com')
+  
+  if (!hasImageExtension && !isImageHost) {
+    if (!confirm('This URL doesn\'t appear to be an image. Are you sure you want to add it?')) {
+      return
     }
-    
-    if (uploadedImages.length > 0) {
-      // Add to existing images
-      formData.value.images = [...(formData.value.images || []), ...uploadedImages]
-      showMessage(`${uploadedImages.length} image(s) uploaded successfully!`, 'success')
-    }
-  } catch (err) {
-    showMessage('Failed to upload images: ' + err.message, 'error')
-  } finally {
-    uploadingImages.value = false
   }
-
-  // Clear the file input
-  event.target.value = ''
+  
+  // Add to images array
+  if (!formData.value.images) {
+    formData.value.images = []
+  }
+  
+  formData.value.images.push(url)
+  newImageUrl.value = ''
+  showMessage('Image URL added successfully!', 'success')
 }
 
 /**
  * Remove image
  */
-const removeImage = async () => {
-  const imageToRemove = formData.value.thumbnail || formData.value.image
-  if (imageToRemove) {
-    try {
-      await deleteImage(imageToRemove)
-      formData.value.thumbnail = ''
-      formData.value.image = ''
-      showMessage('Image removed successfully!', 'success')
-    } catch (err) {
-      console.error('Failed to delete image:', err)
-      formData.value.thumbnail = ''
-      formData.value.image = ''
-    }
-  }
+const removeImage = () => {
+  formData.value.thumbnail = ''
+  formData.value.image = ''
+  showMessage('Image removed successfully!', 'success')
 }
 
 /**
  * Remove additional image
  */
-const removeAdditionalImage = async (index) => {
-  const imageToRemove = formData.value.images[index]
-  if (imageToRemove) {
-    try {
-      await deleteImage(imageToRemove)
-      formData.value.images.splice(index, 1)
-      showMessage('Image removed successfully!', 'success')
-    } catch (err) {
-      console.error('Failed to delete image:', err)
-      formData.value.images.splice(index, 1)
-    }
+const removeAdditionalImage = (index) => {
+  formData.value.images.splice(index, 1)
+  showMessage('Image removed successfully!', 'success')
+}
+
+/**
+ * Get image URL for display (simplified since we're now using direct URLs)
+ */
+const getImageUrl = (imageValue) => {
+  if (!imageValue) {
+    return '/images/Kissel-nologo.png' // Default placeholder
   }
+  
+  // If it's already a URL, return as-is
+  if (imageValue.startsWith('http')) {
+    return imageValue
+  }
+  
+  // Fallback for legacy stored filenames
+  return `/images/${imageValue}`
 }
 
 /**

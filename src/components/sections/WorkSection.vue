@@ -174,13 +174,9 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useFirestore } from '@/composables/useFirestore'
-import { useImageUpload } from '@/composables/useImageUpload'
 
 // Firebase integration for work projects
 const { documents: projects, loading, error, fetchDocuments } = useFirestore('work')
-
-// Image upload integration
-const { getImageUrl } = useImageUpload()
 
 // Track image loading errors
 const imageErrors = ref({})
@@ -270,29 +266,16 @@ const displayProjects = computed(() => {
 const getProjectImageUrl = (imageValue) => {
   if (!imageValue) {
     // Return your profile image as fallback for projects without images
-    return getImageUrl('Kissel-nologo.png')
+    return '/images/Kissel-nologo.png'
   }
   
-  // If it's already a full URL (from GitHub), return as-is
+  // If it's already a full URL, return as-is
   if (imageValue.startsWith('http')) {
     return imageValue
   }
   
-  // Try to get URL from the image upload composable
-  const imageUrl = getImageUrl(imageValue)
-  
-  // If the image URL doesn't exist or fails, fallback to profile image
-  if (!imageUrl || imageUrl === `/images/${imageValue}`) {
-    // Check if the image actually exists in localStorage or GitHub
-    const savedImages = JSON.parse(localStorage.getItem('uploadedImages') || '{}')
-    if (savedImages[imageValue]) {
-      return savedImages[imageValue]
-    }
-    // Final fallback to profile image
-    return getImageUrl('Kissel-nologo.png')
-  }
-  
-  return imageUrl
+  // For legacy filenames, try local images folder
+  return `/images/${imageValue}`
 }
 
 /**
