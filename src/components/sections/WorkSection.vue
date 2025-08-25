@@ -246,7 +246,21 @@ const defaultProjects = [
 // Use Firebase projects or fall back to default
 const displayProjects = computed(() => {
   if (loading.value) return []
-  if (error.value || !projects.value?.length) return defaultProjects
+  if (error.value || !projects.value?.length) {
+    console.log('Using default projects. Error:', error.value, 'Projects length:', projects.value?.length)
+    return defaultProjects
+  }
+  
+  console.log('Using Firebase projects:', projects.value.length, 'projects')
+  projects.value.forEach((project, index) => {
+    console.log(`Project ${index + 1}:`, {
+      title: project.title,
+      thumbnail: project.thumbnail,
+      image: project.image,
+      hasImage: !!(project.thumbnail || project.image)
+    })
+  })
+  
   return projects.value.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 })
 
@@ -258,7 +272,27 @@ const getProjectImageUrl = (imageValue) => {
     // Return your profile image as fallback for projects without images
     return getImageUrl('Kissel-nologo.png')
   }
-  return getImageUrl(imageValue)
+  
+  // If it's already a full URL (from GitHub), return as-is
+  if (imageValue.startsWith('http')) {
+    return imageValue
+  }
+  
+  // Try to get URL from the image upload composable
+  const imageUrl = getImageUrl(imageValue)
+  
+  // If the image URL doesn't exist or fails, fallback to profile image
+  if (!imageUrl || imageUrl === `/images/${imageValue}`) {
+    // Check if the image actually exists in localStorage or GitHub
+    const savedImages = JSON.parse(localStorage.getItem('uploadedImages') || '{}')
+    if (savedImages[imageValue]) {
+      return savedImages[imageValue]
+    }
+    // Final fallback to profile image
+    return getImageUrl('Kissel-nologo.png')
+  }
+  
+  return imageUrl
 }
 
 /**

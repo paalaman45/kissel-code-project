@@ -47,6 +47,12 @@ export const useImageUpload = () => {
       // Try GitHub upload first, fallback to local storage
       try {
         const githubResult = await uploadToGitHub(filename, base64Content)
+        
+        // Store GitHub URL in localStorage for immediate preview
+        const savedImages = JSON.parse(localStorage.getItem('uploadedImages') || '{}')
+        savedImages[filename] = githubResult.content.download_url
+        localStorage.setItem('uploadedImages', JSON.stringify(savedImages))
+        
         return {
           url: githubResult.content.download_url,
           filename: filename
@@ -80,12 +86,18 @@ export const useImageUpload = () => {
     const GITHUB_REPO = import.meta.env.VITE_GITHUB_REPO || 'your-username/your-repo-name'
     const GITHUB_BRANCH = import.meta.env.VITE_GITHUB_BRANCH || 'main'
 
+    // Debug info (can be removed in production)
+    // console.log('GitHub Config Debug:', { hasToken: !!GITHUB_TOKEN, repo: GITHUB_REPO })
+
     if (!GITHUB_TOKEN || !GITHUB_REPO) {
+      console.error('GitHub configuration missing:', { GITHUB_TOKEN: !!GITHUB_TOKEN, GITHUB_REPO })
       throw new Error('GitHub configuration missing. Please set VITE_GITHUB_TOKEN and VITE_GITHUB_REPO environment variables.')
     }
 
     const path = `public/images/${filename}`
     const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${path}`
+
+    // console.log('GitHub API Request:', { url: apiUrl, filename: filename })
 
     const response = await fetch(apiUrl, {
       method: 'PUT',
@@ -101,8 +113,11 @@ export const useImageUpload = () => {
       })
     })
 
+    // console.log('GitHub API Response:', { status: response.status, ok: response.ok })
+
     if (!response.ok) {
       const errorData = await response.json()
+      console.error('GitHub API Error Details:', errorData)
       throw new Error(`GitHub API error: ${errorData.message || response.statusText}`)
     }
 
