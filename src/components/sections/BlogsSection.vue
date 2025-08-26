@@ -21,7 +21,7 @@
           <span class="text-rose-500 font-mono text-lg">></span>
           <span class="text-gray-600 font-mono text-lg ml-2">blog_posts.md</span>
         </div>
-        <h2 class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 bg-clip-text text-transparent mb-6 font-poppins">
+        <h2 class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 bg-clip-text text-transparent mb-6 font-poppins leading-tight pb-2">
           Latest Blog Posts
         </h2>
         <p class="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed font-light">
