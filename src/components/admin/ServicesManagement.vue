@@ -158,6 +158,9 @@
                   <option value="Development">Development</option>
                   <option value="Design">Design</option>
                   <option value="Consulting">Consulting</option>
+                  <option value="Web Hosting">Web Hosting</option>
+                  <option value="Web Services">Web Services</option>
+                  <option value="E-Commerce">E-Commerce</option>
                   <option value="Other">Other</option>
                 </select>
               </div>
@@ -192,6 +195,9 @@
                 <option value="mobile-development">Mobile Development</option>
                 <option value="ui-design">UI Design</option>
                 <option value="consulting">Consulting</option>
+                <option value="web-hosting">Web Hosting</option>
+                <option value="web-services">Web Services</option>
+                <option value="ecommerce">E-Commerce</option>
               </select>
             </div>
 

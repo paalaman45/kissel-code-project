@@ -167,6 +167,7 @@
                   <option value="CSS">CSS</option>
                   <option value="Node.js">Node.js</option>
                   <option value="Firebase">Firebase</option>
+                  <option value="WordPress">WordPress</option>
                   <option value="Performance">Performance</option>
                   <option value="Tutorial">Tutorial</option>
                   <option value="Other">Other</option>
