@@ -187,7 +187,7 @@ import { useFirestore } from '@/composables/useFirestore'
 import { useContentStore } from '@/stores/content'
 
 // Firebase integration
-const { document: aboutDoc, loading, error, fetchDocument, updateDocument } = useFirestore('about')
+const { document: aboutDoc, loading, error, fetchDocument, updateDocument, createDocumentWithId } = useFirestore('about')
 
 // Content store for local fallback
 const contentStore = useContentStore()
@@ -263,14 +263,22 @@ const saveContent = async () => {
       skills
     }
 
-    // Try to update in Firebase
+    // Try to update in Firebase, create if it doesn't exist
     try {
-      await updateDocument('main', updatedData)
-      showMessage('Content updated successfully!', 'success')
+      if (aboutDoc.value) {
+        // Document exists, update it
+        await updateDocument('main', updatedData)
+        showMessage('Content updated successfully!', 'success')
+      } else {
+        // Document doesn't exist, create it with ID 'main'
+        await createDocumentWithId('main', updatedData)
+        showMessage('Content created successfully!', 'success')
+      }
     } catch (firebaseError) {
-      // If Firebase update fails, update local store
+      console.error('Firebase error:', firebaseError)
+      // If Firebase operation fails, update local store
       contentStore.updateAboutMe(updatedData)
-      showMessage('Content updated locally (Firebase not configured)', 'success')
+      showMessage('Content updated locally (Firebase error: ' + firebaseError.message + ')', 'success')
     }
 
     isEditing.value = false

@@ -6,6 +6,7 @@ import {
   getDocs, 
   getDoc,
   addDoc, 
+  setDoc,
   updateDoc, 
   deleteDoc,
   orderBy,
@@ -111,7 +112,7 @@ export const useFirestore = (collectionName: string) => {
   }
 
   /**
-   * Create a new document
+   * Create a new document (auto-generated ID)
    */
   const createDocument = async (data: Record<string, any>) => {
     try {
@@ -126,6 +127,37 @@ export const useFirestore = (collectionName: string) => {
       }
       
       const docRef = await addDoc(collectionRef, docData)
+      
+      // Refresh the documents list
+      await fetchDocuments()
+      
+      return docRef
+    } catch (err: any) {
+      error.value = err.message || 'Error creating document'
+      console.error('Error creating document:', err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Create a new document with custom ID
+   */
+  const createDocumentWithId = async (id: string, data: Record<string, any>) => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      // Add timestamp fields
+      const docData = {
+        ...data,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+      
+      const docRef = doc(db, collectionName, id)
+      await setDoc(docRef, docData)
       
       // Refresh the documents list
       await fetchDocuments()
@@ -201,6 +233,7 @@ export const useFirestore = (collectionName: string) => {
     fetchDocuments,
     fetchDocument,
     createDocument,
+    createDocumentWithId,
     updateDocument,
     deleteDocument
   }

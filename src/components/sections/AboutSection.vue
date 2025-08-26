@@ -35,7 +35,17 @@
           <div class="relative">
             <div class="absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-primary-500 to-accent-500 rounded-full"></div>
             <div class="pl-8">
-              <p class="text-lg text-gray-700 leading-relaxed font-light">
+              <!-- Loading State -->
+              <div v-if="loading" class="space-y-3">
+                <div class="h-4 bg-gray-200 rounded-full animate-pulse"></div>
+                <div class="h-4 bg-gray-200 rounded-full animate-pulse w-11/12"></div>
+                <div class="h-4 bg-gray-200 rounded-full animate-pulse w-10/12"></div>
+                <div class="h-4 bg-gray-200 rounded-full animate-pulse w-9/12"></div>
+                <div class="h-4 bg-gray-200 rounded-full animate-pulse w-11/12"></div>
+                <div class="h-4 bg-gray-200 rounded-full animate-pulse w-8/12"></div>
+              </div>
+              <!-- Content -->
+              <p v-else class="text-lg text-gray-700 leading-relaxed font-light">
                 {{ aboutData.content }}
               </p>
             </div>
@@ -178,6 +188,7 @@ import { useContentStore } from '@/stores/content'
 import { useEnvConfig } from '@/composables/useEnvConfig'
 import { useFirestore } from '@/composables/useFirestore'
 import { useImageUpload } from '@/composables/useImageUpload'
+import { useAuth } from '@/composables/useAuth'
 import KisselImage from '@/assets/Kissel-nologo.png'
 
 // Content store for local state and environment config
@@ -187,6 +198,9 @@ const localAbout = computed(() => contentStore.aboutMe)
 
 // Firebase integration for about content
 const { document: aboutDoc, loading, error, fetchDocument, createDocument } = useFirestore('about')
+
+// Auth integration to check if user is admin
+const { user, isAuthenticated } = useAuth()
 
 // Image upload integration
 const { getImageUrl } = useImageUpload()
@@ -248,21 +262,14 @@ const initializeAboutDocument = async () => {
  * Falls back to local store data if Firebase fails
  */
 onMounted(async () => {
+  // Try to fetch about data from Firebase first
   try {
-    // Try to fetch about data from Firebase
-    // Using a fixed document ID 'main' for the about content
     await fetchDocument('main')
+    console.log('About document loaded from Firebase')
   } catch (err) {
-    // If document doesn't exist, create it with default data from local store
-    if (err.message?.includes('not found')) {
-      try {
-        // Initialize the about document with local store data
-        await initializeAboutDocument()
-      } catch (initError) {
-        // If creation fails (no Firebase connection), silently fall back to local data
-      }
-    }
-    // Silently fall back to local store data if Firebase is not available
+    console.log('About document not found, will use local data')
+    // Document doesn't exist - just use local data
+    // The admin panel will create the document when they edit it for the first time
   }
   
   // Set default profile image if none exists in local store
