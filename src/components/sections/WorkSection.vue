@@ -25,7 +25,7 @@
           My Work
         </h2>
         <p class="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed font-light">
-          Here are some of the projects I've worked on, showcasing my skills and expertise in modern web development and innovative solutions.
+          See how I've used my skills in modern web development to build successful, scalable, and innovative projects.
         </p>
         <div class="w-24 h-1 bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500 mx-auto rounded-full mt-6"></div>
       </div>

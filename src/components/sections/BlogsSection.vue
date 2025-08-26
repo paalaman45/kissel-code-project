@@ -25,7 +25,7 @@
           Latest Blog Posts
         </h2>
         <p class="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed font-light">
-          Sharing insights, tutorials, and thoughts on web development, technology, and best practices through engaging content.
+          Sharing my thoughts and expertise on web development, modern technologies, and industry best practices.
         </p>
         <div class="w-24 h-1 bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500 mx-auto rounded-full mt-6"></div>
       </div>

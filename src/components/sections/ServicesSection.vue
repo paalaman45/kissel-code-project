@@ -25,7 +25,7 @@
           My Services
         </h2>
         <p class="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed font-light">
-          I offer a range of professional services to help bring your ideas to life with modern web technologies and innovative solutions.
+          I offer a full suite of web services designed to build and grow your online presence. I specialize in crafting modern, user-friendly websites that are both beautiful and highly functional.
         </p>
         <div class="w-24 h-1 bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500 mx-auto rounded-full mt-6"></div>
       </div>
