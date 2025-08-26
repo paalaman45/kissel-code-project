@@ -290,7 +290,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useFirestore } from '@/composables/useFirestore'
 
 // Firebase integration
@@ -314,6 +314,23 @@ const formData = ref({
 })
 
 const featuresInput = ref('')
+
+// Category to icon mapping
+const categoryIconMap = {
+  'Development': 'web-development',
+  'Design': 'ui-design',
+  'Consulting': 'consulting',
+  'Web Hosting': 'web-hosting',
+  'Web Services': 'web-services',
+  'E-Commerce': 'ecommerce'
+}
+
+// Watch for category changes and auto-assign icon
+watch(() => formData.value.category, (newCategory) => {
+  if (newCategory && categoryIconMap[newCategory]) {
+    formData.value.icon = categoryIconMap[newCategory]
+  }
+})
 
 /**
  * Format date for display
