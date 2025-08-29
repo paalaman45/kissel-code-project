@@ -145,7 +145,7 @@
 
             <div class="absolute -bottom-8 -left-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-white/30 transform hover:scale-105 transition-all duration-300">
               <div class="text-center">
-                <div class="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">500+</div>
+                <div class="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">600+</div>
                 <div class="text-sm text-gray-600 font-medium">WordPress Sites</div>
               </div>
             </div>
