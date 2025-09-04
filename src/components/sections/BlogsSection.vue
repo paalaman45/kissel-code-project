@@ -55,11 +55,21 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
               <!-- Featured Post Image -->
               <div class="aspect-w-16 aspect-h-9 bg-gradient-to-br from-rose-100 via-slate-100 to-teal-100 relative">
-                <div class="w-full h-64 lg:h-full flex items-center justify-center overflow-hidden">
-                  <div class="w-24 h-24 bg-gradient-to-br from-rose-500 to-teal-500 rounded-3xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
+                <div class="w-full h-64 lg:h-full overflow-hidden">
+                  <img
+                    v-if="!imageErrors[displayBlogs[0].id]"
+                    :src="getBlogImageUrl(displayBlogs[0].thumbnail || displayBlogs[0].image)"
+                    :alt="displayBlogs[0].title"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    @error="() => handleImageError(displayBlogs[0].id)"
+                  />
+                  <!-- Fallback when image failed to load -->
+                  <div v-if="imageErrors[displayBlogs[0].id]" class="w-full h-full flex items-center justify-center bg-gradient-to-br from-rose-100 via-slate-100 to-teal-100">
+                    <div class="w-24 h-24 bg-gradient-to-br from-rose-500 to-teal-500 rounded-3xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                      <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -87,10 +97,12 @@
                 
                 <div class="flex items-center justify-between">
                   <div class="flex items-center space-x-4">
-                    <div class="w-12 h-12 bg-gradient-to-r from-rose-500 to-teal-500 rounded-full flex items-center justify-center">
-                      <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                      </svg>
+                    <div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-r from-rose-500 to-teal-500">
+                      <img 
+                        src="/images/Kissel-nologo.png" 
+                        alt="Author profile" 
+                        class="w-full h-full object-cover"
+                      />
                     </div>
                     <div>
                       <div class="font-semibold text-gray-900">{{ displayBlogs[0].author || 'John Doe' }}</div>
@@ -126,11 +138,21 @@
             
             <!-- Blog Image -->
             <div class="aspect-w-16 aspect-h-9 bg-gradient-to-br from-rose-100 via-slate-100 to-teal-100 relative">
-              <div class="w-full h-48 flex items-center justify-center overflow-hidden">
-                <div class="w-16 h-16 bg-gradient-to-br from-rose-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                  </svg>
+              <div class="w-full h-48 overflow-hidden">
+                <img
+                  v-if="!imageErrors[blog.id]"
+                  :src="getBlogImageUrl(blog.thumbnail || blog.image)"
+                  :alt="blog.title"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  @error="() => handleImageError(blog.id)"
+                />
+                <!-- Fallback when image failed to load -->
+                <div v-if="imageErrors[blog.id]" class="w-full h-full flex items-center justify-center bg-gradient-to-br from-rose-100 via-slate-100 to-teal-100">
+                  <div class="w-16 h-16 bg-gradient-to-br from-rose-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
@@ -170,11 +192,20 @@
           </article>
         </div>
 
-        <!-- Load More Button -->
-        <div v-if="displayBlogs.length >= 6" class="text-center mt-12">
-          <button class="bg-white hover:bg-gray-50 text-primary-600 border border-primary-600 px-8 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
-            Load More Posts
-          </button>
+        <!-- View More Button -->
+        <div v-if="hasMoreBlogs" class="text-center mt-12 animate-fade-in-up animation-delay-800">
+          <router-link
+            to="/blog"
+            class="inline-flex items-center bg-gradient-to-r from-rose-500 to-teal-500 hover:from-rose-600 hover:to-teal-600 text-white px-8 py-4 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-rose-500/25 space-x-2 text-lg"
+          >
+            <span>View All Blog Posts</span>
+            <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </router-link>
+          <p class="mt-3 text-gray-600 text-sm">
+            Read {{ allBlogs.length - 7 }} more blog posts
+          </p>
         </div>
       </div>
 
@@ -202,7 +233,14 @@
                 <div class="flex items-center space-x-4 text-sm text-gray-500">
                   <span>{{ formatDate(selectedBlog.createdAt) }}</span>
                   <span>{{ selectedBlog.readTime || '5 min' }} read</span>
-                  <span>By {{ selectedBlog.author || 'John Doe' }}</span>
+                  <div class="flex items-center space-x-2">
+                    <img 
+                      src="/images/Kissel-nologo.png" 
+                      alt="Author profile" 
+                      class="w-6 h-6 rounded-full object-cover"
+                    />
+                    <span>{{ selectedBlog.author || 'John Doe' }}</span>
+                  </div>
                 </div>
               </div>
               <button @click="closeBlogModal" class="text-gray-400 hover:text-gray-600">
@@ -232,6 +270,9 @@ const { documents: blogs, loading, error, fetchDocuments } = useFirestore('blogs
 // Selected blog for modal
 const selectedBlog = ref(null)
 
+// Track image loading errors
+const imageErrors = ref({})
+
 // Default blog data for fallback
 const defaultBlogs = [
   {
@@ -243,7 +284,9 @@ const defaultBlogs = [
     author: 'John Doe',
     readTime: '8 min',
     createdAt: '2024-01-15',
-    featured: true
+    featured: true,
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   },
   {
     id: 'blog-2',
@@ -253,7 +296,9 @@ const defaultBlogs = [
     category: 'Performance',
     author: 'John Doe',
     readTime: '6 min',
-    createdAt: '2024-01-10'
+    createdAt: '2024-01-10',
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   },
   {
     id: 'blog-3',
@@ -263,7 +308,9 @@ const defaultBlogs = [
     category: 'Firebase',
     author: 'John Doe',
     readTime: '10 min',
-    createdAt: '2024-01-05'
+    createdAt: '2024-01-05',
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   },
   {
     id: 'blog-4',
@@ -273,7 +320,9 @@ const defaultBlogs = [
     category: 'CSS',
     author: 'John Doe',
     readTime: '7 min',
-    createdAt: '2024-01-01'
+    createdAt: '2024-01-01',
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   },
   {
     id: 'blog-5',
@@ -283,7 +332,9 @@ const defaultBlogs = [
     category: 'TypeScript',
     author: 'John Doe',
     readTime: '9 min',
-    createdAt: '2023-12-28'
+    createdAt: '2023-12-28',
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   },
   {
     id: 'blog-6',
@@ -293,16 +344,53 @@ const defaultBlogs = [
     category: 'Node.js',
     author: 'John Doe',
     readTime: '12 min',
-    createdAt: '2023-12-25'
+    createdAt: '2023-12-25',
+    thumbnail: 'Kissel-nologo.png',
+    image: 'Kissel-nologo.png'
   }
 ]
 
-// Use Firebase blogs or fall back to default
-const displayBlogs = computed(() => {
+// All blogs (Firebase or default)
+const allBlogs = computed(() => {
   if (loading.value) return []
   if (error.value || !blogs.value?.length) return defaultBlogs
   return blogs.value.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 })
+
+// Display only first 7 blogs on homepage (1 featured + 6 regular)
+const displayBlogs = computed(() => {
+  return allBlogs.value.slice(0, 7)
+})
+
+// Check if there are more than 7 blogs
+const hasMoreBlogs = computed(() => {
+  return allBlogs.value.length > 7
+})
+
+/**
+ * Get blog image URL with fallback
+ */
+const getBlogImageUrl = (imageValue) => {
+  if (!imageValue) {
+    // Return a default blog image or profile image as fallback
+    return '/images/Kissel-nologo.png'
+  }
+  
+  // If it's already a full URL, return as-is
+  if (imageValue.startsWith('http')) {
+    return imageValue
+  }
+  
+  // For legacy filenames, try local images folder
+  return `/images/${imageValue}`
+}
+
+/**
+ * Handle image loading errors
+ */
+const handleImageError = (blogId) => {
+  imageErrors.value[blogId] = true
+}
 
 /**
  * Format date string to readable format

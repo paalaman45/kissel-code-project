@@ -28,6 +28,24 @@ const router = createRouter({
       name: 'project-detail',
       component: () => import('../views/ProjectDetailView.vue'),
     },
+    {
+      path: '/portfolio',
+      name: 'portfolio',
+      component: () => import('../views/PortfolioView.vue'),
+      meta: {
+        title: 'Portfolio - My Work',
+        description: 'Explore my complete portfolio of web development projects including e-commerce platforms, custom applications, and responsive websites.'
+      }
+    },
+    {
+      path: '/blog',
+      name: 'blog',
+      component: () => import('../views/BlogView.vue'),
+      meta: {
+        title: 'Blog - Web Development Insights',
+        description: 'Read my latest blog posts about web development, Vue.js, modern technologies, and industry best practices.'
+      }
+    },
   ],
 })
 

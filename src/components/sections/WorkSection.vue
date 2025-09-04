@@ -150,11 +150,20 @@
         </div>
       </div>
 
-      <!-- Load More Button -->
-      <div v-if="displayProjects.length >= 6" class="text-center mt-12">
-        <button class="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
-          View More Projects
-        </button>
+      <!-- View More Button -->
+      <div v-if="hasMoreProjects" class="text-center mt-12 animate-fade-in-up animation-delay-800">
+        <router-link
+          to="/portfolio"
+          class="inline-flex items-center bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white px-8 py-4 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/25 space-x-2 text-lg"
+        >
+          <span>View All Projects</span>
+          <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </router-link>
+        <p class="mt-3 text-gray-600 text-sm">
+          Explore {{ allProjects.length - 6 }} more projects in my portfolio
+        </p>
       </div>
 
       <!-- Empty State -->
@@ -239,8 +248,8 @@ const defaultProjects = [
   }
 ]
 
-// Use Firebase projects or fall back to default
-const displayProjects = computed(() => {
+// All projects (Firebase or default)
+const allProjects = computed(() => {
   if (loading.value) return []
   if (error.value || !projects.value?.length) {
     console.log('Using default projects. Error:', error.value, 'Projects length:', projects.value?.length)
@@ -258,6 +267,16 @@ const displayProjects = computed(() => {
   })
   
   return projects.value.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+})
+
+// Display only first 6 projects on homepage
+const displayProjects = computed(() => {
+  return allProjects.value.slice(0, 6)
+})
+
+// Check if there are more than 6 projects
+const hasMoreProjects = computed(() => {
+  return allProjects.value.length > 6
 })
 
 /**
